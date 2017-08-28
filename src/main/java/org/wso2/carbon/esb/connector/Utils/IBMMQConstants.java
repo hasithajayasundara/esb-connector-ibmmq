@@ -36,12 +36,12 @@ public class IBMMQConstants {
     /**
      * Topic String for the topic
      */
-    public static final String TOPIC_STRING = "uri.var.topicstring";
+    public static final String TOPIC_STRING = "uri.var.topicString";
 
     /**
      * Topic name for publish messages
      */
-    public static final String TOPIC_NAME = "uri.var.topicname";
+    public static final String TOPIC_NAME = "uri.var.topicName";
 
     /**
      * Port allowing IBM MQ for TCP/IP connections
@@ -67,7 +67,7 @@ public class IBMMQConstants {
      *
      * @see http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031110_.htm
      */
-    public static final String MAX_CONNECTIONS = "uri.var.maxconnections";
+    public static final String MAX_CONNECTIONS = "uri.var.maxConnections";
 
     /**
      * the number of mamximum unused connections in the customized connection
@@ -75,12 +75,12 @@ public class IBMMQConstants {
      *
      * @see http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031110_.htm
      */
-    public static final String MAX_UNUSED_CONNECTIONS = "uri.var.maxunusedconnections";
+    public static final String MAX_UNUSED_CONNECTIONS = "uri.var.maxUnusedConnections";
 
     /**
      * Name of the queue manager
      */
-    public static final String QMANAGER = "uri.var.qmanager";
+    public static final String QMANAGER = "uri.var.queueMmanager";
 
     /**
      * Name of the queue which the messages need to be placed
@@ -105,7 +105,7 @@ public class IBMMQConstants {
      * @see http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031290_.htm
      * @see http://www-01.ibm.com/support/docview.wss?uid=swg27006037
      */
-    public static final String CIPHERSUIT = "uri.var.ciphersuit";
+    public static final String CIPHERSUIT = "uri.var.cipherSuite";
 
     /**
      * Specify whether you want to enable FIPS support for an agent
@@ -154,12 +154,6 @@ public class IBMMQConstants {
     public static final String PERSISTENT = "uri.var.persistent";
 
     /**
-     * The group identifier for messages. The group identifier defines the messages
-     * that belong to a specified group.
-     */
-    public static final String GROUP_ID = "uri.var.groupID";
-
-    /**
      * You can set a numeric value for the priority, or you can let the message
      * take the default priority of the queue.
      */
@@ -174,7 +168,7 @@ public class IBMMQConstants {
      * Reconnection parameters in case of connection failure.Add the list of hosts
      * and ports here to connector to retry for the connections.
      */
-    public static final String CONNECTION_NAMELIST = "uri.var.connectionNamelist";
+    public static final String CONNECTION_NAMELIST = "uri.var.connectionNameList";
 
     /**
      * Reconnection parameters in case of connection failure .Add reconnection
@@ -187,6 +181,11 @@ public class IBMMQConstants {
      * of the destination queue or topic.
      */
     public static final String CHARACTER_SET = "uri.var.charSet";
+
+    /**
+     * whether the producer is publishing messages to a queue or a topic
+     */
+    public static final String PRODUCER_TYPE = "uri.var.producerType";
 
     /**
      * Integer constant to identify the message priority and charset

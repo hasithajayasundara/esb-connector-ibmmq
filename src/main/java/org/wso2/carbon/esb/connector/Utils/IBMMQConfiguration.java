@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import static com.ibm.mq.constants.CMQC.MQMT_DATAGRAM;
 
@@ -70,24 +69,18 @@ public class IBMMQConfiguration {
     /**
      * Ends connections that are not used for this time in customized
      * connection pool for ibm mq connections
-     *
-     * @see http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031110_.htm
      */
     private long timeout;
 
     /**
      * number of maximum connections managed by the customized connection
      * pool for ibm mq connections
-     *
-     * @see http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031110_.htm
      */
     private int maxConnections;
 
     /**
      * the number of mamximum unused connections in the customized connection
      * pool for ibm mq connections
-     *
-     * @see http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031110_.htm
      */
     private int maxUnusedConnections;
 
@@ -99,9 +92,6 @@ public class IBMMQConfiguration {
     /**
      * cipher suit specification for ibm mq connections.Note that IBM MQ versions
      * below 8.0.0.3 does not support many cipher specs.Update the IBM MQ using fix packs.
-     *
-     * @see http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q031290_.htm
-     * @see http://www-01.ibm.com/support/docview.wss?uid=swg27006037
      */
     private String ciphersuit;
 
@@ -139,12 +129,6 @@ public class IBMMQConfiguration {
      * Use the properties in this group to specify the correlation identifier for messages.
      */
     private String correlationID;
-
-    /**
-     * The group identifier for messages. The group identifier defines the messages
-     * that belong to a specified group.
-     */
-    private String groupID;
 
     /**
      * Type of the message from MQMT_DATAGRAM,MQMT_REPLY,MQMT_REQUEST and MQMT_REPORT
@@ -190,6 +174,11 @@ public class IBMMQConfiguration {
      * of the destination queue or topic.
      */
     private int charSet;
+
+    /**
+     * whether the producer is publishing messages to a queue or a topic
+     */
+    private String producerType;
 
     /**
      * IBMMQConfiguration constructor for get the configuration parameters from
@@ -278,10 +267,6 @@ public class IBMMQConfiguration {
             this.correlationID = properties.get(IBMMQConstants.CORRELATION_ID);
         }
 
-        if (properties.get(IBMMQConstants.GROUP_ID) != null) {
-            this.groupID = properties.get(IBMMQConstants.GROUP_ID);
-        }
-
         if (properties.get(IBMMQConstants.KEY_STORE) != null) {
             this.keyStore = System.getProperty("user.dir") + "/repository/resources/security/" + properties.get(IBMMQConstants.KEY_STORE);
         }
@@ -300,6 +285,10 @@ public class IBMMQConfiguration {
 
         if (properties.get(IBMMQConstants.QUEUE) != null) {
             this.queue = properties.get(IBMMQConstants.QUEUE);
+        }
+
+        if (properties.get(IBMMQConstants.PRODUCER_TYPE) != null) {
+            this.producerType = properties.get(IBMMQConstants.PRODUCER_TYPE);
         }
 
         if (properties.get(IBMMQConstants.CHANNEL) != null) {
@@ -336,9 +325,8 @@ public class IBMMQConfiguration {
         this.trustPassword = "wso2carbon";
         this.keyStore = "wso2carbon.jks";
         this.keyPassword = "wso2carbon";
-        this.messageID = UUID.randomUUID().toString();
-        this.correlationID = UUID.randomUUID().toString();
-        this.groupID = null;
+        this.messageID = null;
+        this.correlationID = null;
         this.messageType = MQMT_DATAGRAM;
         this.persistent = false;
         this.priority = IBMMQConstants.INTEGER_CONST;
@@ -347,19 +335,20 @@ public class IBMMQConfiguration {
         this.topicName = null;
         this.topicString = null;
         this.charSet = IBMMQConstants.INTEGER_CONST;
+        this.producerType = null;
     }
 
     /**
      * @return variable maxConnections.
      */
-    public int getmaxConnections() {
+    public int getMaxConnections() {
         return maxConnections;
     }
 
     /**
      * @return variable maxUnusedConnections.
      */
-    public int getmaxnusedConnections() {
+    public int getMaxUnusedConnections() {
         return maxUnusedConnections;
     }
 
@@ -373,7 +362,7 @@ public class IBMMQConfiguration {
     /**
      * @return variable ciphersuit.
      */
-    public String getCiphersuit() {
+    public String getCipherSuit() {
         return ciphersuit;
     }
 
@@ -497,10 +486,10 @@ public class IBMMQConfiguration {
     }
 
     /**
-     * @return variable groupID.
+     * @return variable producerType.
      */
-    public String getgroupID() {
-        return groupID;
+    public String getProducerType() {
+        return producerType;
     }
 
     /**

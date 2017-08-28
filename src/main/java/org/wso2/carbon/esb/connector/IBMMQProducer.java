@@ -21,6 +21,7 @@ import com.ibm.mq.MQException;
 import com.ibm.mq.MQMessage;
 import com.ibm.mq.MQQueue;
 import com.ibm.mq.MQQueueManager;
+import com.ibm.mq.MQTopic;
 import com.ibm.mq.constants.CMQC;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -48,14 +49,12 @@ import static org.wso2.carbon.esb.connector.Utils.IBMMQConnectionUtils.getQueueM
 /**
  * Add messages to queue
  */
-public class IBMMQPublishQueue extends AbstractConnector {
+public class IBMMQProducer extends AbstractConnector {
 
     /**
      * Connect method which is generating authentication of the connector for each request.
      *
      * @param messageContext ESB messageContext.
-     * @throws ConnectException
-     * @see http://www.ibm.com/support/knowledgecenter/en/SSFKSJ_7.0.1/com.ibm.mq.csqsao.doc/fm12040_1.htm
      */
     @Override
     public void connect(MessageContext messageContext) throws ConnectException {
@@ -72,41 +71,44 @@ public class IBMMQPublishQueue extends AbstractConnector {
         //initialize the queue and put the message in queue
         try {
             MQQueueManager queueManager = getQueueManager(config);
-            MQQueue queue = queueManager.accessQueue(config.getQueue(), CMQC.MQOO_OUTPUT);
-            MQMessage mqMessage = buildMQmessage(config, queueMessage);
-            queue.put(mqMessage);
-            log.info("Message successfully placed at " + config.getQueue());
-            queue.close();
+            if (config.getProducerType().equals("queue")) {
+                MQQueue queue = queueManager.accessQueue(config.getQueue(), CMQC.MQOO_OUTPUT);
+                MQMessage mqMessage = buildMQmessage(config, queueMessage);
+                queue.put(mqMessage);
+                queue.close();
+                queueManager.disconnect();
+                log.info("Message successfully placed at " + config.getQueue());
+            } else {
+                MQTopic publisher = queueManager.accessTopic(config.getTopicString(), config.getTopicName(),
+                        CMQC.MQTOPIC_OPEN_AS_PUBLICATION, CMQC.MQOO_OUTPUT);
+                MQMessage mqMessage = buildMQmessage(config, queueMessage);
+                publisher.put(mqMessage);
+                publisher.close();
+                queueManager.disconnect();
+                log.info("Message successfully placed at " + config.getTopicName());
+            }
         } catch (MQException mqe) {
-            log.error("Error occured in putting message to the queue", mqe);
             storeErrorResponseStatus(messageContext, mqe, mqe.reasonCode);
             handleException("Exception in queue", mqe, messageContext);
         } catch (IOException ioe) {
-            log.error("Error occured in writing payload to the MQMessage", ioe);
             storeErrorResponseStatus(messageContext, ioe, ioe.hashCode());
             handleException("Exception in queue", ioe, messageContext);
         } catch (CertificateException ce) {
-            log.error("Certificate error", ce);
             storeErrorResponseStatus(messageContext, ce, ce.hashCode());
             handleException("Certificate error", ce, messageContext);
         } catch (NoSuchAlgorithmException iae) {
-            log.error("Invalid Algorithm", iae);
             storeErrorResponseStatus(messageContext, iae, iae.hashCode());
             handleException("Invalid Algorithm", iae, messageContext);
         } catch (UnrecoverableKeyException uke) {
-            log.error("Key is unrecoverable", uke);
             storeErrorResponseStatus(messageContext, uke, uke.hashCode());
             handleException("Key is unrecoverable", uke, messageContext);
         } catch (KeyStoreException ke) {
-            log.error("KeyStore is not valid", ke);
             storeErrorResponseStatus(messageContext, ke, ke.hashCode());
             handleException("KeyStore is not valid", ke, messageContext);
         } catch (ClassNotFoundException cne) {
-            log.error("Class not found", cne);
             storeErrorResponseStatus(messageContext, cne, cne.hashCode());
             handleException("Class not found", cne, messageContext);
         } catch (KeyManagementException ikme) {
-            log.error("KeyManagement is invalid", ikme);
             storeErrorResponseStatus(messageContext, ikme, ikme.hashCode());
             handleException("KeyManagement is invalid", ikme, messageContext);
         } catch (Exception e) {
@@ -141,9 +143,6 @@ public class IBMMQPublishQueue extends AbstractConnector {
             mqMessage.persistence = MQPER_PERSISTENT;
         } else {
             mqMessage.persistence = MQPER_NOT_PERSISTENT;
-        }
-        if (config.getgroupID() != null) {
-            mqMessage.groupId = config.getgroupID().getBytes();
         }
         mqMessage.writeString(queueMessage);
         return mqMessage;
